@@ -1,0 +1,13 @@
+[build]
+  command = "next build"         # ← ✅ 変更！
+  publish = "out"                # ← ✅ そのままでOK
+
+[functions]
+  directory = "netlify/functions"
+
+[dev]
+  command = "next dev"
+  targetPort = 3000
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

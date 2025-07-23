@@ -1,0 +1,18 @@
+id: "tanaka-taro"
+name: "田中太郎"
+nameEn: "Taro Tanaka"
+role: "Creative Director"
+roleJa: "クリエイティブディレクター"
+bio: "10年以上のデザイン経験を持つクリエイティブディレクター"
+bioEn: "Creative Director with over 10 years of design experience"
+avatar: "/content/players/images/tanaka-taro.jpg"
+social:
+  twitter: "@tanaka_taro"
+  linkedin: "tanaka-taro"
+  website: "https://tanaka-design.com"
+skills:
+  - "UI/UX Design"
+  - "Brand Strategy"
+  - "Team Leadership"
+joinDate: "2020-04-01"
+active: true
