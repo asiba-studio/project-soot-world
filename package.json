@@ -37,6 +37,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.0.0",
     "three": "^0.178.0",
+    "three-css3drenderer": "^1.0.1",
     "unified": "^11.0.4"
   },
   "devDependencies": {

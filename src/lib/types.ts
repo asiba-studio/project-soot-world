@@ -206,3 +206,20 @@ export const PLAYER_ROLES = [
 export type ProjectCategory = typeof PROJECT_CATEGORIES[number]
 export type ProjectStatus = typeof PROJECT_STATUSES[number]
 export type PlayerRole = typeof PLAYER_ROLES[number]
+
+
+// Three.js型定義
+import * as THREE from 'three'
+declare module 'three' {
+  export class CSS3DRenderer {
+    domElement: HTMLElement
+    constructor()
+    setSize(width: number, height: number): void
+    render(scene: THREE.Scene, camera: THREE.Camera): void
+  }
+
+  export class CSS3DObject extends THREE.Object3D {
+    element: HTMLElement
+    constructor(element: HTMLElement)
+  }
+}
