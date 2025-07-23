@@ -3,37 +3,37 @@
 // Supabase Database型定義
 export interface Database {
     public: {
-      Tables: {
-        players: {
-          Row: Player
-          Insert: PlayerInsert
-          Update: PlayerUpdate
+        Tables: {
+            players: {
+                Row: Player
+                Insert: PlayerInsert
+                Update: PlayerUpdate
+            }
+            projects: {
+                Row: Project
+                Insert: ProjectInsert
+                Update: ProjectUpdate
+            }
+            project_members: {
+                Row: ProjectMember
+                Insert: ProjectMemberInsert
+                Update: ProjectMemberUpdate
+            }
         }
-        projects: {
-          Row: Project
-          Insert: ProjectInsert
-          Update: ProjectUpdate
+        Views: {
+            [_ in never]: never
         }
-        project_members: {
-          Row: ProjectMember
-          Insert: ProjectMemberInsert
-          Update: ProjectMemberUpdate
+        Functions: {
+            [_ in never]: never
         }
-      }
-      Views: {
-        [_ in never]: never
-      }
-      Functions: {
-        [_ in never]: never
-      }
-      Enums: {
-        [_ in never]: never
-      }
+        Enums: {
+            [_ in never]: never
+        }
     }
-  }
-  
-  // Player型定義
-  export interface Player {
+}
+
+// Player型定義
+export interface Player {
     id: string
     name: string
     name_eng: string | null
@@ -43,9 +43,9 @@ export interface Database {
     social_links: SocialLinks
     created_at: string
     updated_at: string
-  }
-  
-  export interface PlayerInsert {
+}
+
+export interface PlayerInsert {
     id?: string
     name: string
     name_eng?: string | null
@@ -55,9 +55,9 @@ export interface Database {
     social_links?: SocialLinks
     created_at?: string
     updated_at?: string
-  }
-  
-  export interface PlayerUpdate {
+}
+
+export interface PlayerUpdate {
     name?: string
     name_eng?: string | null
     avatar?: string | null
@@ -65,10 +65,10 @@ export interface Database {
     role?: string
     social_links?: SocialLinks
     updated_at?: string
-  }
-  
-  // Project型定義
-  export interface Project {
+}
+
+// Project型定義
+export interface Project {
     id: string
     title: string
     subtitle: string | null
@@ -87,9 +87,9 @@ export interface Database {
     display_position: DisplayPosition | null
     created_at: string
     updated_at: string
-  }
-  
-  export interface ProjectInsert {
+}
+
+export interface ProjectInsert {
     id?: string
     title: string
     subtitle?: string | null
@@ -108,9 +108,9 @@ export interface Database {
     display_position?: DisplayPosition | null
     created_at?: string
     updated_at?: string
-  }
-  
-  export interface ProjectUpdate {
+}
+
+export interface ProjectUpdate {
     title?: string
     subtitle?: string | null
     description?: string | null
@@ -127,82 +127,82 @@ export interface Database {
     location?: Location | null
     display_position?: DisplayPosition | null
     updated_at?: string
-  }
-  
-  // ProjectMember型定義
-  export interface ProjectMember {
+}
+
+// ProjectMember型定義
+export interface ProjectMember {
     id: string
     project_id: string
     player_id: string
     role_in_project: string | null
     created_at: string
-  }
-  
-  export interface ProjectMemberInsert {
+}
+
+export interface ProjectMemberInsert {
     id?: string
     project_id: string
     player_id: string
     role_in_project?: string | null
     created_at?: string
-  }
-  
-  export interface ProjectMemberUpdate {
+}
+
+export interface ProjectMemberUpdate {
     project_id?: string
     player_id?: string
     role_in_project?: string | null
-  }
-  
-  // 補助型定義
-  export interface SocialLinks {
+}
+
+// 補助型定義
+export interface SocialLinks {
     x?: string
     instagram?: string
     discord?: string
     spotify?: string
-  }
-  
-  export interface Location {
+}
+
+export interface Location {
     lat: number
     lng: number
-  }
-  
-  export interface DisplayPosition {
+}
+
+export interface DisplayPosition {
     x: number
     y: number
     z: number
-  }
-  
-  // プロジェクトメンバー情報付きのProject型
-  export interface ProjectWithMembers extends Project {
+}
+
+// プロジェクトメンバー情報付きのProject型
+export interface ProjectWithMembers extends Project {
     members: Array<{
-      player: Player
-      role_in_project: string | null
+        player: Player
+        role_in_project: string | null
     }>
-  }
-  
-  // カテゴリとステータスの定数
-  export const PROJECT_CATEGORIES = [
+}
+
+// カテゴリとステータスの定数
+export const PROJECT_CATEGORIES = [
     'スタジオ案件',
     'ワークショップ案件',
     'トークセッション登壇',
     'インキュベーション参加者によるプロジェクト'
-  ] as const
-  
-  export const PROJECT_STATUSES = [
+] as const
+
+export const PROJECT_STATUSES = [
     '企画中',
     '進行中',
     '完了',
     '中止'
-  ] as const
-  
-  export const PLAYER_ROLES = [
+] as const
+
+export const PLAYER_ROLES = [
     'Creative Director',
     'UX Designer',
     'Frontend Engineer',
     'Backend Engineer',
     'Product Manager',
     'Workshop Facilitator'
-  ] as const
-  
-  export type ProjectCategory = typeof PROJECT_CATEGORIES[number]
-  export type ProjectStatus = typeof PROJECT_STATUSES[number]
-  export type PlayerRole = typeof PLAYER_ROLES[number]
+] as const
+
+export type ProjectCategory = typeof PROJECT_CATEGORIES[number]
+export type ProjectStatus = typeof PROJECT_STATUSES[number]
+export type PlayerRole = typeof PLAYER_ROLES[number]
