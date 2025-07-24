@@ -52,6 +52,20 @@ function Card({ position, animal, gradient, onCardClick }: CardProps) {
   const [clicked, setClicked] = useState(false)
   const [floatOffset] = useState(Math.random() * Math.PI * 2) // ランダムな浮遊オフセット
 
+  // テクスチャを読み込み
+  const texture = useMemo(() => {
+    const loader = new THREE.TextureLoader()
+    const tex = loader.load('/images/dummy.png')
+    
+    // テクスチャの設定
+    tex.wrapS = THREE.ClampToEdgeWrapping  // 正しいスペル
+    tex.wrapT = THREE.ClampToEdgeWrapping  // 正しいスペル
+    tex.minFilter = THREE.LinearFilter
+    tex.magFilter = THREE.LinearFilter
+    
+    return tex
+  }, [])
+
   useFrame((state) => {
     if (meshRef.current) {
       // ゆっくりとした浮遊運動
@@ -131,8 +145,7 @@ function Scene({ onCardClick }: SceneProps) {
       id: index,
       position: position as [number, number, number],
       animal: animals[index % animals.length],
-      //gradient: generateRandomGradient()
-      gradient: {color1: '#ffffff', color2: '#fffff', emissive: new THREE.Color('#ffffff')}
+      gradient: generateRandomGradient()
     }))
   }, [])
 
