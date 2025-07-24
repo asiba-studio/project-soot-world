@@ -17,7 +17,7 @@ export default function HomePage() {
         {/* Recent Projects */}
         <div>
           <h2 className="sr-only">
-            最近のプロジェクト
+            最近のプロジェクトaa
           </h2>
             <ProjectWorld />
             {/*<ProjectsList limit={6} />*/}
