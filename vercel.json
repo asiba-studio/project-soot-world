@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "regions": ["nrt1"],
+  "regions": ["nrt"],
   "functions": {
     "app/api/**/*.ts": {
       "runtime": "nodejs20.x"
