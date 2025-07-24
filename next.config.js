@@ -13,9 +13,11 @@ const nextConfig = {
     ],
   },
   
+  transpilePackages: ['three'],
   // 実験的機能（必要に応じて）
   experimental: {
     // appDir: true, // Next.js 15では不要
+    optimizePackageImports: ['@react-three/fiber', '@react-three/drei']
   },
   
   // 環境変数の確認

@@ -38,35 +38,27 @@
   }
 
   h1 {
-    @apply text-4xl font-bold tracking-tight sm:text-5xl text-text-primary;
+    @apply text-4xl font-bold tracking-tight sm:text-5xl;
   }
 
   h2 {
-    @apply text-2xl font-bold sm:text-3xl text-text-primary;
+    @apply text-2xl font-bold sm:text-3xl;
   }
 
   h3 {
-    @apply text-xl font-bold text-text-primary;
+    @apply text-xl font-bold;
   }
 
   h4 {
-    @apply text-lg font-bold text-text-primary;
+    @apply text-lg font-bold;
   }
 
   h5 {
-    @apply text-lg font-bold text-text-primary;
+    @apply text-lg font-bold;
   }
 
   h6 {
-    @apply text-lg font-bold text-text-primary;
-  }
-
-  p {
-    @apply text-text-primary;
-  }
-
-  div {
-    @apply text-text-primary leading-loose;
+    @apply text-lg font-bold;
   }
 
   a:not(.btn) {
