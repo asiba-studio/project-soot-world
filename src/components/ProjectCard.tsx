@@ -4,13 +4,16 @@ import type { ProjectWithMembers } from '@/lib/types'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
+import { useFrame, useThree } from '@react-three/fiber'
 
 interface ProjectCardProps {
   project: ProjectWithMembers
+  onCardClick?: (project: ProjectWithMembers) => void
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, onCardClick }: ProjectCardProps) {
   const meshRef = useRef<THREE.Mesh>(null)
+
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
   const [cardSize, setCardSize] = useState<[number, number]>([2, 3])
@@ -21,7 +24,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   const position = useMemo(() => generateCardPositions(1)[0], [])
 
+  const scale = ((position[2] + 50) / 100) * 5 + 0.5
+
   const texture = useMemo(() => {
+
     const loader = new THREE.TextureLoader()
     const cover = project.cover || '/images/dummy.png'
     const tex = loader.load(cover, (texture) => {
@@ -44,8 +50,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     return tex
   }, [project.cover])
 
+  
+
   return (
-    <group position={position}>
+    <group position={position} scale={scale} onClick={()=>onCardClick?.(project)}>
       {/* カード本体 - 固定サイズ */}
       <mesh
         ref={meshRef}

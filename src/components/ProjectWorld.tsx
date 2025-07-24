@@ -1,19 +1,20 @@
 // src/components/ProjectWorld.tsx
 'use client'
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import { useProjectsWithMembers } from '@/hook/useProjects'
 import ProjectCard from '@/components/ProjectCard'
 import { ProjectWithMembers } from '@/lib/types'
-import { Canvas} from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { OrbitControls } from '@react-three/drei'
+import { ArcballControls, OrbitControls } from '@react-three/drei'
+
 
 
 
 
 // メインシーンコンポーネント
 interface SceneProps {
-    onCardClick: (animal: string) => void
+    onCardClick: (project: ProjectWithMembers) => void
     projects: ProjectWithMembers[]
 }
 
@@ -28,21 +29,19 @@ function Scene({ onCardClick, projects }: SceneProps) {
             <directionalLight
                 position={[10, 10, 5]}
                 intensity={1}
-                color="
-#ffffff"
+                color="#ffffff"
             />
 
             {/* 補助ライト */}
-            <pointLight position={[-10, -10, -10]} intensity={0.3} color="
-#ff9999" />
-            <pointLight position={[10, -10, 10]} intensity={0.3} color="
-#9999ff" />
+            <pointLight position={[-10, -10, -10]} intensity={0.3} color="#ff9999" />
+            <pointLight position={[10, -10, 10]} intensity={0.3} color="#9999ff" />
 
             {/* カードを配置 */}
             {projects.map((project) => (
                 <ProjectCard
                     key={project.id}
                     project={project}
+                    onCardClick={onCardClick}
                 />
             ))}
 
@@ -53,8 +52,8 @@ function Scene({ onCardClick, projects }: SceneProps) {
                 enableRotate={false}   // 回転は無効のまま
                 panSpeed={1.5}         // パンの速度を少し上げる
                 zoomSpeed={0.8}        // ズームの速度
-                minZoom={2}            // 最小ズーム（かなり遠くまで）
-                maxZoom={200}          // 最大ズーム（かなり近くまで）
+                minZoom={-50}            // 最小ズーム（かなり遠くまで）
+                maxZoom={350}          // 最大ズーム（かなり近くまで）
                 mouseButtons={{
                     LEFT: THREE.MOUSE.PAN,    // 左クリック：パン
                     MIDDLE: THREE.MOUSE.DOLLY, // 中クリック：ズーム
@@ -75,17 +74,12 @@ interface ProjectWorldProps {
 export default function ProjectWorld({ limit }: ProjectWorldProps) {
     const { projects, loading, error } = useProjectsWithMembers()
 
-    const [selectedCard, setSelectedCard] = useState<string | null>(null)
-    const [cardHistory, setCardHistory] = useState<string[]>([])
+    const [selectedCard, setSelectedCard] = useState<ProjectWithMembers | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [loadingProgress, setLoadingProgress] = useState(0)
 
-    const handleCardClick = (title: string) => {
-        setSelectedCard(title)
-        setCardHistory(prev => {
-            const newHistory = [title, ...prev.filter(a => a !== title)]
-            return newHistory.slice(0, 5) // 最新5件まで保持
-        })
+    const handleCardClick = (project: ProjectWithMembers) => {
+        setSelectedCard(project)
     }
 
     // 読み込み完了を検知
@@ -141,7 +135,7 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
         <div className="space-y-6">
 
             {/* 3Dキャンバス */}
-            <div className="fixed inset-0">
+            <div className="fixed inset-0 top-16">
                 <Canvas
                     orthographic
                     camera={{
@@ -162,12 +156,21 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
 
             {/* 選択されたカード情報 */}
             {selectedCard && (
-                <div className="absolute top-20 left-6 bg-black/70 backdrop-blur-md text-white p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-2">Selected Animal</h3>
-                    <div className="text-2xl font-bold text-yellow-300">{selectedCard}</div>
-                    <div className="text-sm opacity-75 mt-1">
-                        Click another card to change selection
+                <div className="absolute top-20 right-6 w-[20vw] bg-white text-blue-800 p-4 rounded-sm">
+                    <h3 className="text-sm font-semibold">Selected Project</h3>
+                    <div className="text-xl font-bold text-blue-800">{selectedCard.title}</div>
+                    <img src={selectedCard.cover!} className='w-full my-1'/>
+                    <div className="text-sm opacity-75 my-1">
+                        <p><strong>Category:</strong> {selectedCard.category}</p>
+                        <p><strong>Status:</strong> {selectedCard.status}</p>
+                        <p><strong>Members:</strong> {selectedCard.members.map(m => m.player.name).join(', ')}</p>
+                        <p><strong>Started At:</strong> {new Date(selectedCard.start_date).toLocaleDateString()}</p>
+                        <p><strong>Keywords:</strong> {selectedCard.keywords.join(', ')}</p>
                     </div>
+                    <p className='text-sm font-semibold my-1 opacity-75'>
+                        {selectedCard.description}
+                    </p>
+
                 </div>
             )}
 
@@ -183,22 +186,6 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
                 </div>
             </div>
 
-            {/* 最近選択したカード履歴 */}
-            {cardHistory.length > 0 && (
-                <div className="absolute bottom-6 right-6 bg-black/70 backdrop-blur-md text-white p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-2">📝 Recent Selections</h3>
-                    <div className="space-y-1">
-                        {cardHistory.map((animal, index) => (
-                            <div
-                                key={`${animal}-${index}`}
-                                className={`text-sm ${index === 0 ? 'text-yellow-300 font-semibold' : 'text-gray-300'}`}
-                            >
-                                {index + 1}. {animal}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
