@@ -41,7 +41,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="py-8">
+      <main className="py-0">
         {children}
       </main>
     </div>

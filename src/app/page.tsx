@@ -1,12 +1,11 @@
 // src/app/page.tsx
 import Layout from '@/components/Layout'
-import ProjectWorld from '@/components/ProjectWorld'
-import ProjectsList from '@/components/ProjectList'
+import ProjectsSection from '@/components/ProjectSection'
 
 export default function HomePage() {
   return (
     <Layout>
-      <div className="space-y-8">
+      <div>
         {/* Hero Section */}
         <div className="text-center">
           <h1 className="sr-only">
@@ -17,13 +16,11 @@ export default function HomePage() {
         {/* Recent Projects */}
         <div>
           <h2 className="sr-only">
-            最近のプロジェクトaa
+            Projects
           </h2>
-            <ProjectWorld />
-            {/*<ProjectsList limit={6} />*/}
+          <ProjectsSection />
         </div>
       </div>
     </Layout>
   )
 }
-

@@ -5,11 +5,11 @@ import { useProjectsWithMembers } from '@/hook/useProjects'
 import ProjectCard from '@/components/ProjectCard'
 import { PROJECT_CATEGORIES, PROJECT_STATUSES } from '@/lib/types'
 
-interface ProjectsListProps {
+interface ProjectListProps {
   limit?: number
 }
 
-export default function ProjectsList({ limit }: ProjectsListProps) {
+export default function ProjectList({ limit }: ProjectListProps) {
   const { projects, loading, error } = useProjectsWithMembers()
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')

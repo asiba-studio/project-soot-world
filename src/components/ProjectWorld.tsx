@@ -7,6 +7,7 @@ import { ProjectWithMembers } from '@/lib/types'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ArcballControls, OrbitControls } from '@react-three/drei'
+import { PerspectiveCamera } from '@react-three/drei'
 
 
 
@@ -45,19 +46,29 @@ function Scene({ onCardClick, projects }: SceneProps) {
                 />
             ))}
 
+
+            <PerspectiveCamera
+                makeDefault
+                position={[0, 0, 100]}  // カメラの初期位置
+                fov={15}                // 視野角（Field of View）
+                near={0.1}              // ニアクリップ
+                far={1000}              // ファークリップ
+            />
+
             {/* カメラコントロール */}
             <OrbitControls
-                enablePan={true}       // パン（移動）を有効
-                enableZoom={true}      // ズームを有効
-                enableRotate={false}   // 回転は無効のまま
-                panSpeed={1.5}         // パンの速度を少し上げる
-                zoomSpeed={0.8}        // ズームの速度
-                minZoom={-50}            // 最小ズーム（かなり遠くまで）
-                maxZoom={350}          // 最大ズーム（かなり近くまで）
+                enablePan={true}
+                enableZoom={true}
+                enableRotate={false}        // 回転は引き続き無効
+                panSpeed={2.5}
+                zoomSpeed={0.8}
+                minDistance={10}            // orthographicのzoomの代わりにdistanceを使用
+                maxDistance={500}
+                target={[0, 0, -30]}          // カメラが向く中心点
                 mouseButtons={{
-                    LEFT: THREE.MOUSE.PAN,    // 左クリック：パン
-                    MIDDLE: THREE.MOUSE.DOLLY, // 中クリック：ズーム
-                    RIGHT: THREE.MOUSE.PAN     // 右クリック：パン
+                    LEFT: THREE.MOUSE.PAN,
+                    MIDDLE: THREE.MOUSE.DOLLY,
+                    RIGHT: THREE.MOUSE.PAN
                 }}
             />
         </>
@@ -132,10 +143,10 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
 
 
     return (
-        <div className="space-y-6">
+        <div className="relative w-full h-screen">
 
             {/* 3Dキャンバス */}
-            <div className="fixed inset-0 top-16">
+            <div className="absolute inset-0">
                 <Canvas
                     orthographic
                     camera={{
@@ -156,10 +167,10 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
 
             {/* 選択されたカード情報 */}
             {selectedCard && (
-                <div className="absolute top-20 right-6 w-[20vw] bg-white text-blue-800 p-4 rounded-sm">
+                <div className="absolute top-16 right-6 w-[20vw] bg-white text-blue-800 p-4 rounded-sm">
                     <h3 className="text-sm font-semibold">Selected Project</h3>
                     <div className="text-xl font-bold text-blue-800">{selectedCard.title}</div>
-                    <img src={selectedCard.cover!} className='w-full my-1'/>
+                    <img src={selectedCard.cover!} className='w-full my-1' />
                     <div className="text-sm opacity-75 my-1">
                         <p><strong>Category:</strong> {selectedCard.category}</p>
                         <p><strong>Status:</strong> {selectedCard.status}</p>
@@ -175,7 +186,7 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
             )}
 
             {/* 操作方法 */}
-            <div className="absolute bottom-6 left-6 bg-black/70 backdrop-blur-md text-white p-4 rounded-xl max-w-sm">
+            <div className="fixed bottom-6 left-6 bg-black/70 backdrop-blur-md text-white p-4 rounded-xl max-w-sm">
                 <h3 className="text-lg font-semibold mb-3">🎮 Controls</h3>
                 <div className="space-y-2 text-sm">
                     <p>🖱️ <strong>Drag:</strong> Move camera (Pan)</p>

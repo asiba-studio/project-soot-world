@@ -24,8 +24,6 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
 
   const position = useMemo(() => generateCardPositions(1)[0], [])
 
-  const scale = ((position[2] + 50) / 100) * 5 + 0.5
-
   const texture = useMemo(() => {
 
     const loader = new THREE.TextureLoader()
@@ -53,7 +51,7 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
   
 
   return (
-    <group position={position} scale={scale} onClick={()=>onCardClick?.(project)}>
+    <group position={position} onClick={()=>onCardClick?.(project)}>
       {/* カード本体 - 固定サイズ */}
       <mesh
         ref={meshRef}
@@ -72,7 +70,7 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
       </mesh>
 
       <Text
-        position={[-cardSize[0] * 0.5, cardSize[1] * 0.5 + cardPadding * 0.5, 0.001]}
+        position={[-cardSize[0] * 0.5, cardSize[1] * 0.5 + cardPadding * 0.5, 0.1]}
         fontSize={0.1}              // フォントサイズを調整
         color="black"
         anchorX="left"
@@ -88,7 +86,7 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
       </Text>
 
       {/* テキスト背景 */}
-      <mesh position={[0, textBoxHeight * 0.5, -0.001]}>
+      <mesh position={[0, textBoxHeight * 0.5, -0.1]}>
         <planeGeometry args={[cardSize[0] + cardPadding * 2, cardSize[1] + cardPadding * 2 + textBoxHeight]} />
         <meshBasicMaterial
           color="white"
@@ -97,7 +95,7 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
         />
       </mesh>
 
-      <mesh position={[0, textBoxHeight * 0.5, 0.002]}>
+      <mesh position={[0, textBoxHeight * 0.5, 0.2]}>
         <planeGeometry args={[cardSize[0] + cardPadding * 2, cardSize[1] + cardPadding * 2 + textBoxHeight]} />
         <meshBasicMaterial
           color="black"
