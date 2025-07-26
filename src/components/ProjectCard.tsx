@@ -27,8 +27,8 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
   const texture = useMemo(() => {
 
     const loader = new THREE.TextureLoader()
-    const cover = project.cover || '/images/dummy.png'
-    const tex = loader.load(cover, (texture) => {
+    const card = project.card || '/images/dummy.png'
+    const tex = loader.load(card, (texture) => {
       const image = texture.image
       const imageAspect = image.width / image.height
 
@@ -46,7 +46,7 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
     tex.magFilter = THREE.LinearFilter
 
     return tex
-  }, [project.cover])
+  }, [project.card])
 
 
 
