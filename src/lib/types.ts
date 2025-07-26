@@ -75,6 +75,7 @@ export interface Project {
     description: string | null
     url: string | null
     cover: string | null
+    card: string | null 
     photos: string[] | null
     category: string
     status: string
@@ -96,6 +97,7 @@ export interface ProjectInsert {
     description?: string | null
     url?: string | null
     cover?: string | null
+    card?: string | null 
     photos?: string[] | null
     category: string
     status: string
@@ -116,6 +118,7 @@ export interface ProjectUpdate {
     description?: string | null
     url?: string | null
     cover?: string | null
+    card?: string | null 
     photos?: string[] | null
     category?: string
     status?: string
