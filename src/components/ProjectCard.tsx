@@ -48,61 +48,26 @@ export default function ProjectCard({ project, onCardClick }: ProjectCardProps) 
     return tex
   }, [project.cover])
 
-  
+
 
   return (
-    <group position={position} onClick={()=>onCardClick?.(project)}>
+    <group position={position} onClick={() => onCardClick?.(project)}>
       {/* カード本体 - 固定サイズ */}
       <mesh
         ref={meshRef}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <planeGeometry args={cardSize} /> {/* サイズを少し大きく固定 */}
+        <planeGeometry args={cardSize} />
         <meshBasicMaterial
           map={texture}
-          //color={clicked || hovered ? '#e0e0e0' : '#ffffff'}
-          color="white"
+          color={clicked || hovered ? '#e0e0e0' : '#ffffff'}
           side={THREE.DoubleSide}
           transparent
           opacity={1.0}
         />
       </mesh>
 
-      <Text
-        position={[-cardSize[0] * 0.5, cardSize[1] * 0.5 + cardPadding * 0.5, 0.1]}
-        fontSize={0.1}              // フォントサイズを調整
-        color="black"
-        anchorX="left"
-        anchorY="bottom"
-        fontWeight="bold"
-      >
-        <meshBasicMaterial
-          color="black"
-          transparent
-          opacity={1.0}
-        />
-        {project.title || 'プロジェクト名未設定'}
-      </Text>
-
-      {/* テキスト背景 */}
-      <mesh position={[0, textBoxHeight * 0.5, -0.1]}>
-        <planeGeometry args={[cardSize[0] + cardPadding * 2, cardSize[1] + cardPadding * 2 + textBoxHeight]} />
-        <meshBasicMaterial
-          color="white"
-          transparent
-          opacity={1.0}
-        />
-      </mesh>
-
-      <mesh position={[0, textBoxHeight * 0.5, 0.2]}>
-        <planeGeometry args={[cardSize[0] + cardPadding * 2, cardSize[1] + cardPadding * 2 + textBoxHeight]} />
-        <meshBasicMaterial
-          color="black"
-          transparent
-          opacity={clicked || hovered ? 0.33 : 0.0}
-        />
-      </mesh>
 
     </group>
   )
