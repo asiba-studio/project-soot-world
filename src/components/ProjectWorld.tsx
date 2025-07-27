@@ -13,6 +13,7 @@ import { getCategoryColor, clusterCenters, clusterRadius, calculateLayout } from
 import { Text } from '@react-three/drei'
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { useCallback } from 'react'
 
 
 
@@ -24,9 +25,10 @@ interface SceneProps {
     projects: ProjectWithMembers[]
     positions: { [key: string]: [number, number, number] }
     viewMode: ViewMode
+    isAnimating: boolean
 }
 
-function Scene({ onCardClick, projects, positions, viewMode }: SceneProps) {
+function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: SceneProps) {
 
     const controlsRef = useRef<any>(null);
 
@@ -90,13 +92,13 @@ function Scene({ onCardClick, projects, positions, viewMode }: SceneProps) {
                 </>
             )}
 
-            {/* カードを配置 - positionsを使用 */}
+            {/* カードを配置 */}
             {projects.map((project) => (
                 <ProjectCard3D
                     key={project.id}
                     project={project}
                     position={positions[project.id] || [0, 0, 0]}
-                    onCardClick={onCardClick}
+                    onCardClick={isAnimating ? undefined : onCardClick} 
                 />
             ))}
 
@@ -142,6 +144,7 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
 
     const [selectedCard, setSelectedCard] = useState<ProjectWithMembers | null>(null)
     const [viewMode, setViewMode] = useState<ViewMode>('default')
+    const [isAnimating, setIsAnimating] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [loadingProgress, setLoadingProgress] = useState(0)
 
@@ -153,13 +156,24 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
         }, {} as { [key: string]: [number, number, number] });
     }, [viewMode, projects]);
 
-    const handleCardClick = (project: ProjectWithMembers) => {
-        setSelectedCard(project)
-    }
+    const handleCardClick = useCallback((project: ProjectWithMembers) => {
+        if (!isAnimating) {
+            setSelectedCard(project)
+        }
+    }, [isAnimating])
 
-    const handleModeChange = (mode: ViewMode) => {
+    const handleModeChange = useCallback((mode: ViewMode) => {
+        if (isAnimating) return; // アニメーション中は無効
+        
+        setIsAnimating(true);
         setViewMode(mode);
-    }
+        
+        // アニメーション完了後にフラグをリセット
+        // react-springのデフォルト設定では約1.5秒程度
+        setTimeout(() => {
+            setIsAnimating(false);
+        }, 1500);
+    }, [isAnimating]);
 
 
 
@@ -219,7 +233,18 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
             <ModeSelector
                 currentMode={viewMode}
                 onModeChange={handleModeChange}
+                disabled={isAnimating} 
             />
+
+            {/* アニメーション状態表示 */}
+            {isAnimating && (
+                <div className="fixed top-6 right-6 bg-blue-600/90 backdrop-blur-md text-white px-4 py-2 rounded-lg">
+                    <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-sm font-medium">Repositioning...</span>
+                    </div>
+                </div>
+            )}
 
             {/* 3Dキャンバス */}
             <div className="absolute inset-0">
@@ -237,7 +262,13 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
                         powerPreference: "high-performance"
                     }}
                 >
-                    <Scene onCardClick={handleCardClick} projects={filteredProjects} positions={positions} viewMode={viewMode} />
+                    <Scene 
+                        onCardClick={handleCardClick} 
+                        projects={filteredProjects}
+                        positions={positions}
+                        viewMode={viewMode}
+                        isAnimating={isAnimating}
+                    />
                 </Canvas>
             </div>
 

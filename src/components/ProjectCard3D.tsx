@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
+import { useSpring, animated } from '@react-spring/three'
 
 interface ProjectCard3DProps {
   project: ProjectWithMembers
@@ -18,6 +19,16 @@ export default function ProjectCard3D({ project, position = [0, 0, 0], onCardCli
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
   const [cardSize, setCardSize] = useState<[number, number]>([2, 3])
+
+  // アニメーション設定
+  const { animatedPosition } = useSpring({
+    animatedPosition: position,
+    config: { 
+      tension: 120, 
+      friction: 30,
+      mass: 1
+    }
+  })
 
 
   const texture = useMemo(() => {
@@ -93,7 +104,7 @@ export default function ProjectCard3D({ project, position = [0, 0, 0], onCardCli
   }
 
   return (
-    <group position={position}>
+    <animated.group position={animatedPosition}>
       {/* カード本体 - 固定サイズ */}
       <mesh
         ref={meshRef}
@@ -111,7 +122,7 @@ export default function ProjectCard3D({ project, position = [0, 0, 0], onCardCli
           opacity={1.0}
         />
       </mesh>
-    </group>
+      </animated.group>
   )
 }
 
