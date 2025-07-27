@@ -1,4 +1,4 @@
-// src/components/ProjectCard.tsx
+// src/components/ProjectCard3D.tsx
 import React from 'react'
 import type { ProjectWithMembers } from '@/lib/types'
 import { useMemo, useRef, useState } from 'react'
@@ -13,6 +13,7 @@ interface ProjectCard3DProps {
 
 export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DProps) {
   const meshRef = useRef<THREE.Mesh>(null)
+  const { camera } = useThree()
 
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
@@ -25,7 +26,6 @@ export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DPro
   const position = useMemo(() => generateCardPositions(1)[0], [])
 
   const texture = useMemo(() => {
-
     const loader = new THREE.TextureLoader()
     const card = project.card || '/images/dummy.png'
     const tex = loader.load(card, (texture) => {
@@ -48,15 +48,64 @@ export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DPro
     return tex
   }, [project.card])
 
+  // クリックハンドラーでレイキャスティングを制御
+  const handleClick = (event: any) => {
+    // イベントの伝播を停止
+    event.stopPropagation()
+    
+    // 全てのintersectionを取得し、カメラに最も近いものを確認
+    if (event.intersections && event.intersections.length > 0) {
+      // カメラからの距離でソート
+      const sortedIntersections = event.intersections.sort(
+        (a: any, b: any) => a.distance - b.distance
+      )
+      
+      // 最も近いオブジェクトが現在のカードかどうかを確認
+      const closestObject = sortedIntersections[0].object
+      if (meshRef.current && closestObject === meshRef.current) {
+        onCardClick?.(project)
+      }
+    } else {
+      // intersectionsが利用できない場合のフォールバック
+      onCardClick?.(project)
+    }
+  }
 
+  const handlePointerOver = (event: any) => {
+    // 他のオブジェクトへの伝播を停止
+    event.stopPropagation()
+    
+    // カメラからの距離を計算して、手前にあるかチェック
+    if (meshRef.current && event.intersections) {
+      const sortedIntersections = event.intersections.sort(
+        (a: any, b: any) => a.distance - b.distance
+      )
+      
+      if (sortedIntersections[0]?.object === meshRef.current) {
+        setHovered(true)
+        document.body.style.cursor = 'pointer'
+      }
+    } else {
+      setHovered(true)
+      document.body.style.cursor = 'pointer'
+    }
+  }
+
+  const handlePointerOut = (event: any) => {
+    event.stopPropagation()
+    setHovered(false)
+    document.body.style.cursor = 'auto'
+  }
 
   return (
-    <group position={position} onClick={() => onCardClick?.(project)}>
+    <group position={position}>
       {/* カード本体 - 固定サイズ */}
       <mesh
         ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onClick={handleClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        renderOrder={-position[2]} 
       >
         <planeGeometry args={cardSize} />
         <meshBasicMaterial
@@ -67,8 +116,6 @@ export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DPro
           opacity={1.0}
         />
       </mesh>
-
-
     </group>
   )
 }
@@ -85,4 +132,3 @@ function generateCardPositions(count: number): [number, number, number][] {
   }
   return positions
 }
-
