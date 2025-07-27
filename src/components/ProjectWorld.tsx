@@ -11,6 +11,8 @@ import { PerspectiveCamera } from '@react-three/drei'
 import ModeSelector from '@/components/ModeSelector'
 import { getCategoryColor, clusterCenters, clusterRadius, calculateLayout } from '@/lib/layoutEngine';
 import { Text } from '@react-three/drei'
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 
 
 
@@ -25,6 +27,24 @@ interface SceneProps {
 }
 
 function Scene({ onCardClick, projects, positions, viewMode }: SceneProps) {
+
+    const controlsRef = useRef<any>(null);
+
+    // カメラコントロールの更新
+    useFrame(() => {
+        if (controlsRef.current) {
+            const controls = controlsRef.current;
+            const camera = controls.object;
+            
+            // カメラの現在位置から、Z軸方向のターゲットを計算
+            // カメラベクトルが常に (0, 0, 1) になるようにターゲットを設定
+            const targetZ = camera.position.z - 30; // カメラから30単位前方
+            controls.target.set(camera.position.x, camera.position.y, targetZ);
+            
+            // コントロールを更新
+            controls.update();
+        }
+    });
 
 
     return (
