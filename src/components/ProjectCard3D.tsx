@@ -8,22 +8,17 @@ import { useFrame, useThree } from '@react-three/fiber'
 
 interface ProjectCard3DProps {
   project: ProjectWithMembers
+  position?: [number, number, number] 
   onCardClick?: (project: ProjectWithMembers) => void
 }
 
-export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DProps) {
+export default function ProjectCard3D({ project, position = [0, 0, 0], onCardClick }: ProjectCard3DProps) {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { camera } = useThree()
 
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
   const [cardSize, setCardSize] = useState<[number, number]>([2, 3])
 
-  // カードデザインパラメータ
-  const cardPadding = 0.03
-  const textBoxHeight = 0.15
-
-  const position = useMemo(() => generateCardPositions(1)[0], [])
 
   const texture = useMemo(() => {
     const loader = new THREE.TextureLoader()

@@ -1,13 +1,16 @@
 // src/components/ProjectWorld.tsx
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useProjectsWithMembers } from '@/hook/useProjects'
 import ProjectCard3D from '@/components/ProjectCard3D'
-import { ProjectWithMembers } from '@/lib/types'
+import { ProjectWithMembers, ViewMode } from '@/lib/types'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ArcballControls, OrbitControls } from '@react-three/drei'
 import { PerspectiveCamera } from '@react-three/drei'
+import ModeSelector from '@/components/ModeSelector'
+import { getCategoryColor, clusterCenters, clusterRadius, calculateLayout } from '@/lib/layoutEngine';
+import { Text } from '@react-three/drei'
 
 
 
@@ -17,9 +20,12 @@ import { PerspectiveCamera } from '@react-three/drei'
 interface SceneProps {
     onCardClick: (project: ProjectWithMembers) => void
     projects: ProjectWithMembers[]
+    positions: { [key: string]: [number, number, number] }
+    viewMode: ViewMode
 }
 
-function Scene({ onCardClick, projects }: SceneProps) {
+function Scene({ onCardClick, projects, positions, viewMode }: SceneProps) {
+
 
     return (
         <>
@@ -37,11 +43,39 @@ function Scene({ onCardClick, projects }: SceneProps) {
             <pointLight position={[-10, -10, -10]} intensity={0.3} color="#ff9999" />
             <pointLight position={[10, -10, 10]} intensity={0.3} color="#9999ff" />
 
-            {/* カードを配置 */}
+            {/* クラスタリングの中心を描画 */}
+            {viewMode === 'scatter' && (
+                <>
+
+                    {Object.entries(clusterCenters)
+                        .filter(([category]) => category !== 'default') // デフォルトは除外
+                        .map(([category, center]) => {
+                            console.log(`Rendering cluster for ${category} at position:`, center);
+                            return (
+                                <group key={category}>
+
+
+                                    <mesh position={[center[0], center[1], center[2]-50]}>
+                                        <circleGeometry args={[clusterRadius]} />
+                                        <meshBasicMaterial
+                                            color={getCategoryColor(category)}
+                                            transparent
+                                            opacity={0.08}
+                                            side={THREE.DoubleSide}
+                                        />
+                                    </mesh>
+                                </group>
+                            );
+                        })}
+                </>
+            )}
+
+            {/* カードを配置 - positionsを使用 */}
             {projects.map((project) => (
                 <ProjectCard3D
                     key={project.id}
                     project={project}
+                    position={positions[project.id] || [0, 0, 0]}
                     onCardClick={onCardClick}
                 />
             ))}
@@ -71,6 +105,7 @@ function Scene({ onCardClick, projects }: SceneProps) {
                     RIGHT: THREE.MOUSE.PAN
                 }}
             />
+
         </>
     )
 }
@@ -86,12 +121,27 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
     const { projects, loading, error } = useProjectsWithMembers()
 
     const [selectedCard, setSelectedCard] = useState<ProjectWithMembers | null>(null)
+    const [viewMode, setViewMode] = useState<ViewMode>('default')
     const [isLoading, setIsLoading] = useState(true)
     const [loadingProgress, setLoadingProgress] = useState(0)
+
+    const positions = useMemo(() => {
+        const layout = calculateLayout(viewMode, projects);
+        return layout.reduce((acc, item) => {
+            acc[item.id] = item.position;
+            return acc;
+        }, {} as { [key: string]: [number, number, number] });
+    }, [viewMode, projects]);
 
     const handleCardClick = (project: ProjectWithMembers) => {
         setSelectedCard(project)
     }
+
+    const handleModeChange = (mode: ViewMode) => {
+        setViewMode(mode);
+    }
+
+
 
     // 読み込み完了を検知
     React.useEffect(() => {
@@ -145,6 +195,12 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
     return (
         <div className="relative w-full h-screen">
 
+            {/* モードセレクター */}
+            <ModeSelector
+                currentMode={viewMode}
+                onModeChange={handleModeChange}
+            />
+
             {/* 3Dキャンバス */}
             <div className="absolute inset-0">
                 <Canvas
@@ -161,7 +217,7 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
                         powerPreference: "high-performance"
                     }}
                 >
-                    <Scene onCardClick={handleCardClick} projects={filteredProjects} />
+                    <Scene onCardClick={handleCardClick} projects={filteredProjects} positions={positions} viewMode={viewMode} />
                 </Canvas>
             </div>
 

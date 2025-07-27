@@ -226,3 +226,15 @@ declare module 'three' {
     constructor(element: HTMLElement)
   }
 }
+
+// ビューのモード定義
+export type ViewMode = 'default' | 'timeline' | 'scatter' | 'network' | 'geographic';
+export interface LayoutConfig {
+  mode: ViewMode;
+  projects: Project[];
+  // その他のパラメータ
+}
+export interface ProjectPosition {
+    id: string;
+    position: [number, number, number];
+  }
