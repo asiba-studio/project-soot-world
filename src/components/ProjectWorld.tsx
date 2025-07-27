@@ -2,7 +2,7 @@
 'use client'
 import React, { useState } from 'react'
 import { useProjectsWithMembers } from '@/hook/useProjects'
-import ProjectCard from '@/components/ProjectCard'
+import ProjectCard3D from '@/components/ProjectCard3D'
 import { ProjectWithMembers } from '@/lib/types'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
@@ -39,7 +39,7 @@ function Scene({ onCardClick, projects }: SceneProps) {
 
             {/* カードを配置 */}
             {projects.map((project) => (
-                <ProjectCard
+                <ProjectCard3D
                     key={project.id}
                     project={project}
                     onCardClick={onCardClick}

@@ -2,7 +2,7 @@
 'use client'
 import React, { useState } from 'react'
 import { useProjectsWithMembers } from '@/hook/useProjects'
-import ProjectCard from '@/components/ProjectCard'
+import ProjectCard2D from '@/components/ProjectCard2D'
 import { PROJECT_CATEGORIES, PROJECT_STATUSES } from '@/lib/types'
 
 interface ProjectListProps {
@@ -44,7 +44,7 @@ export default function ProjectList({ limit }: ProjectListProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-30 px-20">
       {/* Filters */}
       {!limit && (
         <div className="flex flex-wrap gap-4">
@@ -82,9 +82,9 @@ export default function ProjectList({ limit }: ProjectListProps) {
       )}
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-10">
         {filteredProjects.map(project => (
-          <ProjectCard key={project.id} project={project} />
+          <ProjectCard2D key={project.id} project={project} />
         ))}
       </div>
 

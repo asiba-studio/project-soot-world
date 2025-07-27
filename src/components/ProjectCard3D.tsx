@@ -6,12 +6,12 @@ import * as THREE from 'three'
 import { Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
-interface ProjectCardProps {
+interface ProjectCard3DProps {
   project: ProjectWithMembers
   onCardClick?: (project: ProjectWithMembers) => void
 }
 
-export default function ProjectCard({ project, onCardClick }: ProjectCardProps) {
+export default function ProjectCard3D({ project, onCardClick }: ProjectCard3DProps) {
   const meshRef = useRef<THREE.Mesh>(null)
 
   const [hovered, setHovered] = useState(false)
