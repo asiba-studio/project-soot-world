@@ -1,6 +1,6 @@
 // src/components/ProjectWorld.tsx
 'use client'
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useProjectsWithMembers } from '@/hook/useProjects'
 import ProjectCard3D from '@/components/ProjectCard3D'
 import { ProjectWithMembers, ViewMode } from '@/lib/types'
@@ -13,6 +13,7 @@ import { getCategoryColor, clusterCenters, clusterRadius, calculateLayout } from
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useCallback } from 'react'
+import TrackpadControls from '@/components/TrackpadControls'
 
 
 
@@ -36,12 +37,12 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
         if (controlsRef.current) {
             const controls = controlsRef.current;
             const camera = controls.object;
-            
+
             // カメラの現在位置から、Z軸方向のターゲットを計算
             // カメラベクトルが常に (0, 0, 1) になるようにターゲットを設定
             const targetZ = camera.position.z - 30; // カメラから30単位前方
             controls.target.set(camera.position.x, camera.position.y, targetZ);
-            
+
             // コントロールを更新
             controls.update();
         }
@@ -76,7 +77,7 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
                                 <group key={category}>
 
 
-                                    <mesh position={[center[0], center[1], center[2]-50]}>
+                                    <mesh position={[center[0], center[1], center[2] - 50]}>
                                         <circleGeometry args={[clusterRadius]} />
                                         <meshBasicMaterial
                                             color={getCategoryColor(category)}
@@ -97,7 +98,7 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
                     key={project.id}
                     project={project}
                     position={positions[project.id] || [0, 0, 0]}
-                    onCardClick={isAnimating ? undefined : onCardClick} 
+                    onCardClick={isAnimating ? undefined : onCardClick}
                 />
             ))}
 
@@ -113,19 +114,29 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
             {/* カメラコントロール */}
             <OrbitControls
                 enablePan={true}
-                enableZoom={true}
-                enableRotate={false}        // 回転は引き続き無効
+                enableZoom={false}
+                enableRotate={false}        
                 panSpeed={2.5}
                 zoomSpeed={0.8}
-                minDistance={10}            // orthographicのzoomの代わりにdistanceを使用
+                minDistance={10}            
                 maxDistance={500}
-                target={[0, 0, -30]}          // カメラが向く中心点
+                target={[0, 0, -30]}          
                 mouseButtons={{
                     LEFT: THREE.MOUSE.PAN,
                     MIDDLE: THREE.MOUSE.DOLLY,
                     RIGHT: THREE.MOUSE.PAN
                 }}
             />
+
+            {/* カスタムトラックパッドコントロール */}
+            <TrackpadControls
+                zoomSpeed={1.5}
+                panSpeed={0.5}
+                enableZoom={true}
+                enablePan={true}
+                targetZ={-30}  
+            />
+
 
         </>
     )
@@ -163,10 +174,10 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
 
     const handleModeChange = useCallback((mode: ViewMode) => {
         if (isAnimating) return; // アニメーション中は無効
-        
+
         setIsAnimating(true);
         setViewMode(mode);
-        
+
         // アニメーション完了後にフラグをリセット
         // react-springのデフォルト設定では約1.5秒程度
         setTimeout(() => {
@@ -232,10 +243,10 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
             <ModeSelector
                 currentMode={viewMode}
                 onModeChange={handleModeChange}
-                disabled={isAnimating} 
+                disabled={isAnimating}
             />
 
-            {/* アニメーション状態表示 */}
+            {/* アニメーション状態表示
             {isAnimating && (
                 <div className="fixed top-6 right-6 bg-blue-600/90 backdrop-blur-md text-white px-4 py-2 rounded-lg">
                     <div className="flex items-center gap-2">
@@ -243,26 +254,20 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
                         <span className="text-sm font-medium">Repositioning...</span>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* 3Dキャンバス */}
             <div className="absolute inset-0">
                 <Canvas
-                    orthographic
-                    camera={{
-                        position: [0, 0, 100],  // カメラをさらに遠くに配置
-                        zoom: 30,               // ズーム値をさらに下げて全体表示
-                        near: 0.1,
-                        far: 2000               // 描画距離を拡大
-                    }}
+
                     gl={{
                         antialias: true,
                         alpha: true,
                         powerPreference: "high-performance"
                     }}
                 >
-                    <Scene 
-                        onCardClick={handleCardClick} 
+                    <Scene
+                        onCardClick={handleCardClick}
                         projects={filteredProjects}
                         positions={positions}
                         viewMode={viewMode}
@@ -306,3 +311,4 @@ export default function ProjectWorld({ limit }: ProjectWorldProps) {
         </div>
     )
 }
+
