@@ -29,6 +29,7 @@ interface SceneProps {
 }
 
 function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: SceneProps) {
+    const [isTrackpadEvent, setIsTrackpadEvent] = useState(false);
 
     const controlsRef = useRef<any>(null);
 
@@ -114,7 +115,7 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
             {/* カメラコントロール */}
             <OrbitControls
                 enablePan={true}
-                enableZoom={false}
+                enableZoom={!isTrackpadEvent}
                 enableRotate={false}        
                 panSpeed={2.5}
                 zoomSpeed={0.8}
@@ -134,7 +135,8 @@ function Scene({ onCardClick, projects, positions, viewMode, isAnimating }: Scen
                 panSpeed={0.5}
                 enableZoom={true}
                 enablePan={true}
-                targetZ={-30}  
+                targetZ={-30} 
+                onTrackpadEvent={setIsTrackpadEvent}
             />
 
 
